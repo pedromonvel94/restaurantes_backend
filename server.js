@@ -10,8 +10,21 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const allowedOrigins = [
+  "http://localhost:4200",
+  "https://findmybite.onrender.com",
+  "https://retaurantes-frontend.vercel.app"
+];
+
 app.use(cors({
-  origin: 'https://findmybite.onrender.com',
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true); // Postman/curl
+    const isAllowed =
+      allowedOrigins.includes(origin) ||
+      /^https:\/\/retaurantes-frontend.*\.vercel\.app$/.test(origin);
+
+    cb(null, isAllowed);
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
